@@ -5,11 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ZuttoWallet ZTC</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib@6.1.0/bitcoinjs-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
   <div class="wallet-container">
     <header class="wallet-header">
-      <img src="https://github.com/zuttorepo/ZuttoDev/blob/main/logozuttocoin.png?raw=true" alt="Zuttocoin Logo" class="wallet-logo" />
+      <img src="logo.png" alt="Zuttocoin Logo" class="wallet-logo" />
       <h1>ZuttoWallet <span>ZTC</span></h1>
       <p class="tagline">💰 Your Golden Gateway to Zuttocoin</p>
     </header>
@@ -18,6 +21,7 @@
       <button onclick="generateWallet()">🚀 Generate Wallet</button>
       <input type="text" id="importKey" placeholder="🔐 Import Private Key (WIF)">
       <button onclick="importPrivateKey()">📥 Import</button>
+      <button onclick="exportWallet()">💾 Export Wallet</button>
     </section>
 
     <section class="wallet-info">
@@ -32,6 +36,10 @@
       <input type="number" id="amount" placeholder="Amount">
       <button onclick="sendZTC()">✅ Send</button>
     </section>
+
+    <video id="qr-video" width="300" style="margin-top: 15px; display:none;"></video>
+    <button onclick="startQRScan()">📷 Scan QR</button>
+    <div id="qrcode" style="margin-top: 20px;"></div>
 
     <footer>
       <p>&copy; 2025 Zuttocoin Foundation</p>
