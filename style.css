@@ -1,0 +1,68 @@
+body {
+  margin: 0;
+  background: linear-gradient(#000000, #1a1a1a);
+  color: gold;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.wallet-container {
+  max-width: 700px;
+  margin: auto;
+  padding: 40px 20px;
+  background: #111;
+  border-radius: 20px;
+  box-shadow: 0 0 30px gold;
+  text-align: center;
+}
+
+.wallet-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid gold;
+  margin-bottom: 10px;
+}
+
+.wallet-header h1 {
+  font-size: 32px;
+  margin: 10px 0;
+}
+
+.wallet-header span {
+  color: #ffd700;
+  text-shadow: 0 0 10px gold;
+}
+
+.tagline {
+  font-size: 14px;
+  color: #ffcc00;
+  margin-bottom: 20px;
+}
+
+.wallet-controls, .wallet-info, .wallet-send {
+  margin: 20px 0;
+}
+
+input, button {
+  padding: 12px;
+  margin: 5px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+}
+
+input {
+  width: 80%;
+}
+
+button {
+  background-color: gold;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 10px #ffcc00;
+}
+
+button:hover {
+  background-color: #fff700;
+}
