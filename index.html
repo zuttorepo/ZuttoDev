@@ -2,54 +2,153 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ZuttoWallet ZTC</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --gold: #ffd700;
+      --dark-bg: #121212;
+      --card-bg: #1e1e1e;
+      --border: #444;
+    }
 
-  <!-- ✅ Library untuk wallet -->
-  <script src="https://unpkg.com/bitcoinjs-lib@6.1.0/dist/bitcoinjs-lib.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-  <script src="https://unpkg.com/html5-qrcode"></script>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--dark-bg);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      color: var(--gold);
+      text-shadow: 0 0 10px var(--gold);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-top: 1.5rem;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: var(--gold);
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .label {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <div class="wallet-container">
-    <header class="wallet-header">
-      <img src="https://github.com/zuttorepo/ZuttoDev/blob/main/logo.png?raw=true" alt="Zuttocoin Logo" class="wallet-logo" />
-      <h1>ZuttoWallet <span>ZTC</span></h1>
-      <p class="tagline">💰 Your Golden Gateway to Zuttocoin</p>
-    </header>
+  <h1>ZuttoWallet ZTC 🪙</h1>
 
-    <section class="wallet-controls">
-      <button onclick="generateWallet()">🚀 Generate Wallet</button>
-      <input type="text" id="importKey" placeholder="🔐 Import Private Key (WIF)">
-      <button onclick="importPrivateKey()">📥 Import</button>
-      <button onclick="exportWallet()">💾 Export Wallet</button>
-    </section>
+  <div class="card">
+    <button onclick="generate()">🚀 Generate New Address</button>
+    <div id="gen-result"></div>
 
-    <section class="wallet-info">
-      <div><strong>🔑 Address:</strong> <span id="ztcAddress">-</span></div>
-      <div><strong>🧾 Private Key:</strong> <span id="ztcPrivate">-</span></div>
-      <div><strong>💳 Balance:</strong> <span id="ztcBalance">0 ZTC</span></div>
-    </section>
+    <div class="label">💰 Balance</div>
+    <div id="balance-result">Balance: <i>--</i> ZTC</div>
 
-    <section class="wallet-send">
-      <h2>📤 Send ZTC</h2>
-      <input type="text" id="toAddress" placeholder="Recipient Address">
-      <input type="number" id="amount" placeholder="Amount">
-      <button onclick="sendZTC()">✅ Send</button>
-    </section>
+    <div class="label">🔓 Import Existing Wallet</div>
+    <input type="text" id="importWif" placeholder="Enter your WIF">
+    <button onclick="importWallet()">🔑 Import Wallet</button>
+    <div id="import-result"></div>
 
-    <video id="qr-video" width="300" style="margin-top: 15px; display:none;"></video>
-    <button onclick="startQRScan()">📷 Scan QR</button>
-    <div id="qrcode" style="margin-top: 20px;"></div>
-
-    <footer>
-      <p>&copy; 2025 Zuttocoin Foundation</p>
-    </footer>
+    <div class="label">📤 Send ZTC</div>
+    <input type="text" id="sendTo" placeholder="Destination Address">
+    <input type="number" id="sendAmount" placeholder="Amount">
+    <button onclick="send()">Send</button>
+    <div id="send-result"></div>
   </div>
 
-  <!-- Script utama -->
-  <script src="wallet.js"></script>
+  <script>
+    const api = "/api";
+
+    async function generate() {
+      const res = await fetch(`${api}/generate`, { method: "POST" });
+      const data = await res.json();
+      const address = data.address;
+      const wif = data.wif;
+
+      document.getElementById("gen-result").innerHTML = `
+        <p>🔐 Address:<br><b>${address}</b></p>
+        <p>🔑 WIF:<br><code>${wif}</code></p>
+      `;
+
+      const balance = await fetch(`${api}/balance`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address })
+      });
+      const balanceData = await balance.json();
+      document.getElementById("balance-result").innerHTML = `💰 Balance: <b>${balanceData.balance}</b> ZTC`;
+    }
+
+    async function importWallet() {
+      const wif = document.getElementById("importWif").value.trim();
+      if (!wif) return;
+
+      const res = await fetch(`${api}/import`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ wif })
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        document.getElementById("import-result").innerHTML = `❌ ${data.error}`;
+        return;
+      }
+
+      const address = data.address;
+
+      document.getElementById("gen-result").innerHTML = `
+        <p>🔐 Address:<br><b>${address}</b></p>
+        <p>🔑 WIF:<br><code>${wif}</code></p>
+      `;
+
+      const balance = await fetch(`${api}/balance`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address })
+      });
+      const balanceData = await balance.json();
+      document.getElementById("balance-result").innerHTML = `💰 Balance: <b>${balanceData.balance}</b> ZTC`;
+    }
+
+    async function send() {
+      const to = document.getElementById("sendTo").value;
+      const amount = parseFloat(document.getElementById("sendAmount").value);
+      const res = await fetch(`${api}/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to, amount })
+      });
+      const data = await res.json();
+      document.getElementById("send-result").innerHTML = `📄 TX ID: <code>${data.txid}</code>`;
+    }
+  </script>
 </body>
 </html>
