@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZuttoWallet ZTC</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wallet-container">
+    <header class="wallet-header">
+      <img src="https://github.com/zuttorepo/ZuttoDev/blob/main/logozuttocoin.png?raw=true" alt="Zuttocoin Logo" class="wallet-logo" />
+      <h1>ZuttoWallet <span>ZTC</span></h1>
+      <p class="tagline">💰 Your Golden Gateway to Zuttocoin</p>
+    </header>
+
+    <section class="wallet-controls">
+      <button onclick="generateWallet()">🚀 Generate Wallet</button>
+      <input type="text" id="importKey" placeholder="🔐 Import Private Key (WIF)">
+      <button onclick="importPrivateKey()">📥 Import</button>
+    </section>
+
+    <section class="wallet-info">
+      <div><strong>🔑 Address:</strong> <span id="ztcAddress">-</span></div>
+      <div><strong>🧾 Private Key:</strong> <span id="ztcPrivate">-</span></div>
+      <div><strong>💳 Balance:</strong> <span id="ztcBalance">0 ZTC</span></div>
+    </section>
+
+    <section class="wallet-send">
+      <h2>📤 Send ZTC</h2>
+      <input type="text" id="toAddress" placeholder="Recipient Address">
+      <input type="number" id="amount" placeholder="Amount">
+      <button onclick="sendZTC()">✅ Send</button>
+    </section>
+
+    <footer>
+      <p>&copy; 2025 Zuttocoin Foundation</p>
+    </footer>
+  </div>
+
+  <script src="wallet.js"></script>
+</body>
+</html>
