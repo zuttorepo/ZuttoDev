@@ -4,28 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ZuttoWallet ZTC</title>
-
   <link rel="stylesheet" href="style.css" />
-  
-  <!-- QR scanner & lib utama -->
   <script src="https://unpkg.com/html5-qrcode"></script>
-
-  <!-- BitcoinJS lib dan inisialisasi global -->
   <script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib@6.1.0/bitcoinjs-lib.min.js"></script>
-  <script>
-    const bitcoin = window.bitcoinjs; // fix untuk akses global bitcoinjs
-  </script>
-
-  <!-- CryptoJS untuk AES PIN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
-  <!-- QR Code Generator -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 </head>
 <body>
   <div class="wallet-container">
     <header class="wallet-header">
-      <img src="https://github.com/zuttorepo/ZuttoDev/blob/main/logozuttocoin.png?raw=true" alt="Zuttocoin Logo" class="wallet-logo" />
+      <img src="logo.png" alt="Zuttocoin Logo" class="wallet-logo" />
       <h1>ZuttoWallet <span>ZTC</span></h1>
       <p class="tagline">💰 Your Golden Gateway to Zuttocoin</p>
     </header>
