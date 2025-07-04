@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,27 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ZuttoWallet ZTC</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib@6.1.0/bitcoinjs-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
   <div class="wallet-container">
     <header class="wallet-header">
+      <img src="logo.png" alt="Zuttocoin Logo" class="wallet-logo" />
       <h1>ZuttoWallet <span>ZTC</span></h1>
+      <p class="tagline">💰 Your Golden Gateway to Zuttocoin</p>
     </header>
-    <!-- Konten lainnya -->
+
+    <section class="wallet-controls">
+      <button onclick="generateWallet()">🚀 Generate Wallet</button>
+      <input type="text" id="importKey" placeholder="🔐 Import Private Key (WIF)">
+      <button onclick="importPrivateKey()">📥 Import</button>
+      <button onclick="exportWallet()">💾 Export Wallet</button>
+    </section>
+
+    <section class="wallet-info">
+      <div><strong>🔑 Address:</strong> <span id="ztcAddress">-</span></div>
+      <div><strong>🧾 Private Key:</strong> <span id="ztcPrivate">-</span></div>
+      <div><strong>💳 Balance:</strong> <span id="ztcBalance">0 ZTC</span></div>
+    </section>
+
+    <section class="wallet-send">
+      <h2>📤 Send ZTC</h2>
+      <input type="text" id="toAddress" placeholder="Recipient Address">
+      <input type="number" id="amount" placeholder="Amount">
+      <button onclick="sendZTC()">✅ Send</button>
+    </section>
+
+    <video id="qr-video" width="300" style="margin-top: 15px; display:none;"></video>
+    <button onclick="startQRScan()">📷 Scan QR</button>
+    <div id="qrcode" style="margin-top: 20px;"></div>
+
+    <footer>
+      <p>&copy; 2025 Zuttocoin Foundation</p>
+    </footer>
   </div>
 
-<section class="wallet-redeploy" style="margin-top: 30px; text-align: center;">
-  <h3>🛠 Developer Tools</h3>
-  <button onclick="triggerDeploy()">🔁 Redeploy Wallet (Netlify)</button>
-</section>
-
-<script>
-function triggerDeploy() {
-  fetch("https://api.netlify.com/build_hooks/68679e5558653989f6740779", { method: "POST" })
-    .then(() => alert("🚀 Deploy triggered via Build Hook!"))
-    .catch(() => alert("❌ Failed to trigger deploy."));
-}
-</script>
+  <script src="wallet.js"></script>
 </body>
-
 </html>
