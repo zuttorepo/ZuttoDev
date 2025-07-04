@@ -1,70 +1,48 @@
-const ztc = {
-  messagePrefix: '\x18Zuttocoin Signed Message:\n',
-  bech32: 'ztc',
-  bip32: { public: 0x0488b21e, private: 0x0488ade4 },
-  pubKeyHash: 0x42,
-  scriptHash: 0x05,
-  wif: 0x80
+const bitcoin = require("bitcoinjs-lib");
+const axios = require("axios");
+
+const ZTC_RPC = "http://127.0.0.1:8332"; // Ganti dengan node ZTC yang aktif
+const ZTC_AUTH = {
+  username: "rpcuser",
+  password: "rpcpassword"
 };
 
-function generateWallet() {
-  const keyPair = bitcoin.ECPair.makeRandom({ network: ztc });
-  const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey, network: ztc });
-  const wif = keyPair.toWIF();
-  const pin = prompt("Masukkan PIN Anda");
-  const encrypted = CryptoJS.AES.encrypt(wif, pin).toString();
+// SIMULASI — gunakan file atau DB untuk produksi
+let keypair = null;
 
-  document.getElementById("ztcAddress").textContent = address;
-  document.getElementById("ztcPrivate").textContent = wif;
-  localStorage.setItem("ztc_addr", address);
-  localStorage.setItem("ztc_priv", encrypted);
-  QRCode.toCanvas(document.getElementById('qrcode'), address);
+function generateAddress() {
+  keypair = bitcoin.ECPair.makeRandom();
+  const { address } = bitcoin.payments.p2pkh({ pubkey: keypair.publicKey });
+  return {
+    address,
+    wif: keypair.toWIF()
+  };
 }
 
-function importPrivateKey() {
-  const wif = document.getElementById("importKey").value;
-  try {
-    const keyPair = bitcoin.ECPair.fromWIF(wif, ztc);
-    const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey, network: ztc });
-    const pin = prompt("Masukkan PIN Anda");
-    const encrypted = CryptoJS.AES.encrypt(wif, pin).toString();
-
-    document.getElementById("ztcAddress").textContent = address;
-    document.getElementById("ztcPrivate").textContent = wif;
-    localStorage.setItem("ztc_addr", address);
-    localStorage.setItem("ztc_priv", encrypted);
-    QRCode.toCanvas(document.getElementById('qrcode'), address);
-  } catch (e) {
-    alert("Invalid WIF format!");
-  }
+async function getBalance(address) {
+  const result = await callZTC("getreceivedbyaddress", [address]);
+  return { balance: result };
 }
 
-function sendZTC() {
-  alert("Fitur kirim akan dihubungkan ke RPC node ZTC.");
+async function sendToAddress(to, amount) {
+  const result = await callZTC("sendtoaddress", [to, amount]);
+  return { txid: result };
 }
 
-function exportWallet() {
-  const address = localStorage.getItem("ztc_addr");
-  const encryptedPriv = localStorage.getItem("ztc_priv");
-  const blob = new Blob([`Address: ${address}\nEncrypted WIF: ${encryptedPriv}`], { type: "text/plain" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "ztc_wallet_backup.txt";
-  link.click();
+async function callZTC(method, params) {
+  const res = await axios.post(ZTC_RPC, {
+    jsonrpc: "1.0",
+    id: "ztc",
+    method,
+    params
+  }, {
+    auth: ZTC_AUTH
+  });
+  return res.data.result;
 }
 
-function startQRScan() {
-  const video = document.getElementById("qr-video");
-  video.style.display = "block";
-  const scanner = new Html5Qrcode("qr-video");
-  scanner.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: 250 },
-    (decodedText) => {
-      document.getElementById("toAddress").value = decodedText;
-      scanner.stop();
-      video.style.display = "none";
-    },
-    (errorMsg) => {}
-  );
-}
+module.exports = {
+  generateAddress,
+  getBalance,
+  sendToAddress
+};
